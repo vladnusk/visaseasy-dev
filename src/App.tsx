@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  Redirect,
+} from 'react-router-dom';
 import './App.css';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { teal, green } from '@mui/material/colors';
@@ -7,6 +12,7 @@ import ApplicationsList from './pages/ApplicationsList';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import { ApplicationFormLayout } from './pages/ApplicationFormLayout';
+
 const theme = createTheme({
   palette: {
     primary: teal,
@@ -20,19 +26,31 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <Router>
-        <AppMenu>
-          <Switch>
-            <Route exact path="/">
-              {isLogged ? <ApplicationsList /> : <SignIn />}
-            </Route>
-            <Route path="/signup">
-              <SignUp />
-            </Route>
-            <Route path="/newApplication">
-              <ApplicationFormLayout />
-            </Route>
-          </Switch>
-        </AppMenu>
+        <Switch>
+          <Route exact path="/">
+            {isLogged ? (
+              <Redirect from="/" to="/dashboard" />
+            ) : (
+              <Redirect from="/" to="/signin" />
+            )}
+          </Route>
+          <Route path="/signup">
+            <SignUp />
+          </Route>
+          <Route path="/signin">
+            <SignIn />
+          </Route>
+          <AppMenu>
+            <>
+              <Route path="/dashboard">
+                <ApplicationsList />
+              </Route>
+              <Route path="/newApplication">
+                <ApplicationFormLayout />
+              </Route>
+            </>
+          </AppMenu>
+        </Switch>
       </Router>
     </ThemeProvider>
   );

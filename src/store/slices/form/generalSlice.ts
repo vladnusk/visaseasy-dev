@@ -36,11 +36,6 @@ export const generalSlice = createSlice({
     },
     setTripDateFrom: (state, action: PayloadAction<string>) => {
       state.tripDateFrom = action.payload;
-      // state.tripDates.push(action.payload);
-      // const uniqueArr = state.tripDates.filter((elem, index, self) => {
-      //   return index === self.indexOf(elem);
-      // });
-      // state.tripDates = uniqueArr;
     },
     setTripDateTo: (state, action: PayloadAction<string>) => {
       state.tripDateTo = action.payload;

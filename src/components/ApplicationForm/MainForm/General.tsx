@@ -1,7 +1,5 @@
 import {
   FormControl,
-  MenuItem,
-  Select,
   FormHelperText,
   Box,
   TextField,
@@ -10,12 +8,10 @@ import {
   RadioGroup,
   FormControlLabel,
   Radio,
-  InputLabel,
 } from '@mui/material/';
 import DateAdapter from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DatePicker from '@mui/lab/DatePicker';
-import { getData } from 'country-list';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { generalForm } from '../../../fakeApi/Form/general';
 import { useAppSelector, useAppDispatch } from '../../../store/hooks';
@@ -30,7 +26,9 @@ import {
   setAddress,
   setPhone,
 } from '../../../store/slices/form/generalSlice';
+import format from 'date-fns/format';
 import { IGeneral } from '../../../models/form/IGeneral';
+import { SelectCountry } from '../FormUtils/SelectCountry';
 
 interface Props {
   handleBack: () => void;
@@ -48,7 +46,6 @@ export const General = ({ handleBack, handleNext, steps, formStep }: Props) => {
   } = useForm();
   const dispatch = useAppDispatch();
   const generalData = useAppSelector(selectGeneralData);
-  const countries = getData();
   const form = generalForm();
 
   const onSubmit: SubmitHandler<IGeneral> = (data) => {
@@ -80,45 +77,32 @@ export const General = ({ handleBack, handleNext, steps, formStep }: Props) => {
         switch (field.inputType) {
           case 'select-country':
             return (
-              <>
-                <FormControl
-                  key={field.inputId}
-                  sx={{ my: 1 }}
-                  error={errors[field.inputId as keyof IGeneral] !== undefined}>
-                  <InputLabel>{field.inputTitle}</InputLabel>
-                  <Select
-                    value={
-                      watch(`${field.inputId}` as const)
-                        ? watch(`${field.inputId}` as const)
-                        : generalData[field.inputId as keyof IGeneral] || ''
-                    }
-                    labelId={field.inputId}
-                    {...register(`${field.inputId}` as const, {
-                      required: field.required
-                        ? 'This field is required'
-                        : false,
-                    })}>
-                    {countries.map((country) => {
-                      return (
-                        <MenuItem key={country.code} value={country.code}>
-                          {country.name}
-                        </MenuItem>
-                      );
-                    })}
-                  </Select>
-                </FormControl>
-              </>
+              <SelectCountry
+                key={field.inputId}
+                inputId={field.inputId}
+                inputTitle={field.inputTitle}
+                data={generalData}
+                isRequired={field.required}
+                objectKey={field.inputId as keyof IGeneral}
+                watch={watch}
+                register={register}
+                errors={errors}
+              />
             );
           case 'text':
             return (
-              <Box sx={{ my: 1 }}>
+              <Box sx={{ my: 1 }} key={field.inputId}>
                 <TextField
                   sx={{ width: 300 }}
-                  key={field.inputId}
                   id={field.inputId}
                   label={field.inputTitle}
                   variant="outlined"
                   placeholder={field.placeholder}
+                  value={
+                    watch(`${field.inputId}` as const)
+                      ? watch(`${field.inputId}` as const)
+                      : generalData[field.inputId as keyof IGeneral] || ''
+                  }
                   {...register(`${field.inputId}` as const)}
                 />
               </Box>
@@ -128,27 +112,34 @@ export const General = ({ handleBack, handleNext, steps, formStep }: Props) => {
               <Box
                 sx={{
                   my: 1,
-                }}>
+                }}
+                key={field.inputId}>
                 <FormHelperText>{field.inputHelperText}</FormHelperText>
                 <Box sx={{ display: 'flex', flexDirection: 'row', my: 1 }}>
                   <LocalizationProvider dateAdapter={DateAdapter}>
                     <DatePicker
-                      key={field.inputId + 'from'}
                       label="From"
                       value={generalData.tripDateFrom}
-                      {...register(`${field.inputId}` as const)}
+                      {...register(`${field.inputId + 'From'}` as const)}
                       onChange={(newValue) => {
-                        dispatch(setTripDateFrom(newValue || ''));
+                        dispatch(
+                          setTripDateFrom(
+                            format(new Date(newValue || ''), 'yyyy-MM-dd'),
+                          ),
+                        );
                       }}
                       renderInput={(params) => <TextField {...params} />}
                     />
                     <DatePicker
-                      key={field.inputId + 'to'}
                       label="To"
                       value={generalData.tripDateTo}
                       {...register(`${field.inputId + 'To'}` as const)}
                       onChange={(newValue) => {
-                        dispatch(setTripDateTo(newValue || ''));
+                        dispatch(
+                          setTripDateTo(
+                            format(new Date(newValue || ''), 'yyyy-MM-dd'),
+                          ),
+                        );
                       }}
                       renderInput={(params) => <TextField {...params} />}
                     />
@@ -158,14 +149,15 @@ export const General = ({ handleBack, handleNext, steps, formStep }: Props) => {
             );
           case 'date':
             return (
-              <Box sx={{ my: 1 }}>
+              <Box sx={{ my: 1 }} key={field.inputId}>
                 <LocalizationProvider dateAdapter={DateAdapter}>
                   <DatePicker
-                    key={field.inputId}
                     label={field.inputTitle}
                     value={generalData.dob}
                     onChange={(newValue) => {
-                      dispatch(setDob(newValue || ''));
+                      dispatch(
+                        setDob(format(new Date(newValue || ''), 'yyyy-MM-dd')),
+                      );
                     }}
                     renderInput={(params) => <TextField {...params} />}
                   />
@@ -192,7 +184,7 @@ export const General = ({ handleBack, handleNext, steps, formStep }: Props) => {
                   {field.options?.map((option) => {
                     return (
                       <FormControlLabel
-                        key={option.length}
+                        key={option}
                         control={<Radio />}
                         label={option}
                         value={option}

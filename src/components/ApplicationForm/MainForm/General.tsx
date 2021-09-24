@@ -1,14 +1,4 @@
-import {
-  FormControl,
-  FormHelperText,
-  Box,
-  TextField,
-  Button,
-  FormLabel,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-} from '@mui/material/';
+import { FormHelperText, Box, TextField, Button } from '@mui/material/';
 import DateAdapter from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DatePicker from '@mui/lab/DatePicker';
@@ -29,6 +19,7 @@ import {
 import format from 'date-fns/format';
 import { IGeneral } from '../../../models/form/IGeneral';
 import { SelectCountry } from '../FormUtils/SelectCountry';
+import { RadioBox } from '../FormUtils/RadioBox';
 
 interface Props {
   handleBack: () => void;
@@ -166,34 +157,18 @@ export const General = ({ handleBack, handleNext, steps, formStep }: Props) => {
             );
           case 'radio':
             return (
-              <FormControl
-                sx={{
-                  my: 1,
-                }}
-                key={field.inputId}>
-                <FormLabel component="legend">{field.inputTitle}</FormLabel>
-                <RadioGroup
-                  row
-                  aria-label={field.inputId}
-                  name="radio-buttons-group"
-                  value={
-                    watch(`${field.inputId}` as const)
-                      ? watch(`${field.inputId}` as const)
-                      : generalData[field.inputId as keyof IGeneral] || ''
-                  }>
-                  {field.options?.map((option) => {
-                    return (
-                      <FormControlLabel
-                        key={option}
-                        control={<Radio />}
-                        label={option}
-                        value={option}
-                        {...register(`${field.inputId}` as const)}
-                      />
-                    );
-                  })}
-                </RadioGroup>
-              </FormControl>
+              <RadioBox
+                key={field.inputId}
+                inputId={field.inputId}
+                inputTitle={field.inputTitle}
+                options={field.options || []}
+                data={generalData}
+                isRequired={field.required}
+                objectKey={field.inputId as keyof IGeneral}
+                watch={watch}
+                register={register}
+                errors={errors}
+              />
             );
         }
       })}

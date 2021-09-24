@@ -42,10 +42,9 @@ export const Employment = ({
         switch (field.inputType) {
           case 'text':
             return (
-              <Box sx={{ my: 1 }}>
+              <Box sx={{ my: 1 }} key={field.inputId}>
                 <TextField
                   sx={{ width: 300 }}
-                  key={field.inputId}
                   id={field.inputId}
                   label={field.inputTitle}
                   variant="outlined"
@@ -57,10 +56,9 @@ export const Employment = ({
 
           case 'date':
             return (
-              <Box sx={{ my: 1 }}>
+              <Box sx={{ my: 1 }} key={field.inputId}>
                 <LocalizationProvider dateAdapter={DateAdapter}>
                   <DatePicker
-                    key={field.inputId}
                     label={field.inputTitle}
                     value={value}
                     onChange={(newValue) => {

@@ -1,13 +1,4 @@
-import {
-  FormControl,
-  Box,
-  FormLabel,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-  Button,
-  Typography,
-} from '@mui/material/';
+import { Box, Button } from '@mui/material/';
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import { ITrip } from '../../../models/form/ITrip';
 import { useForm, SubmitHandler } from 'react-hook-form';
@@ -24,6 +15,7 @@ import {
   selectTripData,
 } from '../../../store/slices/form/tripSlice';
 import { SelectCountry } from '../FormUtils/SelectCountry';
+import { RadioBox } from '../FormUtils/RadioBox';
 import { useState } from 'react';
 import React from 'react';
 
@@ -141,35 +133,18 @@ export const Trip = ({ handleNext, steps, formStep }: Props) => {
 
           case 'radio':
             return (
-              <FormControl sx={{ my: 1 }} key={field.inputId}>
-                <FormLabel component="legend">{field.inputTitle}</FormLabel>
-                <RadioGroup
-                  row
-                  aria-label={field.inputId}
-                  name="radio-buttons-group"
-                  value={
-                    watch(`${field.inputId}` as const)
-                      ? watch(`${field.inputId}` as const)
-                      : tripData[field.inputId as keyof ITrip] || ''
-                  }>
-                  {field.options?.map((option) => {
-                    return (
-                      <FormControlLabel
-                        key={option}
-                        control={<Radio />}
-                        label={option}
-                        value={option}
-                        {...register(`${field.inputId}` as const, {
-                          required: 'This field is required',
-                        })}
-                      />
-                    );
-                  })}
-                </RadioGroup>
-                <Typography sx={{ color: 'red', ml: 1, mt: 0.5, fontSize: 12 }}>
-                  {errors[field.inputId as keyof ITrip]?.message}
-                </Typography>
-              </FormControl>
+              <RadioBox
+                key={field.inputId}
+                inputId={field.inputId}
+                inputTitle={field.inputTitle}
+                options={field.options || []}
+                data={tripData}
+                isRequired={field.required}
+                objectKey={field.inputId as keyof ITrip}
+                watch={watch}
+                register={register}
+                errors={errors}
+              />
             );
         }
       })}

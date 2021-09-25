@@ -7,19 +7,13 @@ import { generalForm } from '../../../fakeApi/Form/general';
 import { useAppSelector, useAppDispatch } from '../../../store/hooks';
 import {
   selectGeneralData,
-  setDob,
-  setFullName,
-  setTripDateFrom,
-  setTripDateTo,
-  setMaritalStatus,
-  setApplyingFrom,
-  setAddress,
-  setPhone,
+  updateForm,
 } from '../../../store/slices/form/generalSlice';
 import format from 'date-fns/format';
 import { IGeneral } from '../../../models/form/IGeneral';
 import { SelectCountry } from '../FormUtils/SelectCountry';
 import { RadioBox } from '../FormUtils/RadioBox';
+import { DatePickerBox } from '../FormUtils/DatePickerBox';
 
 interface Props {
   handleBack: () => void;
@@ -34,20 +28,15 @@ export const General = ({ handleBack, handleNext, steps, formStep }: Props) => {
     handleSubmit,
     watch,
     formState: { errors },
+    control,
   } = useForm();
   const dispatch = useAppDispatch();
-  const generalData = useAppSelector(selectGeneralData);
+  const generalData = useAppSelector(selectGeneralData).form;
   const form = generalForm();
 
   const onSubmit: SubmitHandler<IGeneral> = (data) => {
-    dispatch(setFullName(data.fullName));
-    dispatch(setDob(data.dob));
-    dispatch(setTripDateFrom(data.tripDateFrom));
-    dispatch(setTripDateTo(data.tripDateTo));
-    dispatch(setMaritalStatus(data.maritalStatus));
-    dispatch(setApplyingFrom(data.applyingFrom));
-    dispatch(setAddress(data.address));
-    dispatch(setPhone(data.phone));
+    dispatch(updateForm(data));
+
     console.log(data);
     handleNext();
   };
@@ -114,9 +103,12 @@ export const General = ({ handleBack, handleNext, steps, formStep }: Props) => {
                       {...register(`${field.inputId + 'From'}` as const)}
                       onChange={(newValue) => {
                         dispatch(
-                          setTripDateFrom(
-                            format(new Date(newValue || ''), 'yyyy-MM-dd'),
-                          ),
+                          updateForm({
+                            tripDateFrom: format(
+                              new Date(newValue || ''),
+                              'yyyy-MM-dd',
+                            ),
+                          }),
                         );
                       }}
                       renderInput={(params) => <TextField {...params} />}
@@ -127,9 +119,12 @@ export const General = ({ handleBack, handleNext, steps, formStep }: Props) => {
                       {...register(`${field.inputId + 'To'}` as const)}
                       onChange={(newValue) => {
                         dispatch(
-                          setTripDateTo(
-                            format(new Date(newValue || ''), 'yyyy-MM-dd'),
-                          ),
+                          updateForm({
+                            tripDateTo: format(
+                              new Date(newValue || ''),
+                              'yyyy-MM-dd',
+                            ),
+                          }),
                         );
                       }}
                       renderInput={(params) => <TextField {...params} />}
@@ -140,20 +135,35 @@ export const General = ({ handleBack, handleNext, steps, formStep }: Props) => {
             );
           case 'date':
             return (
-              <Box sx={{ my: 1 }} key={field.inputId}>
-                <LocalizationProvider dateAdapter={DateAdapter}>
-                  <DatePicker
-                    label={field.inputTitle}
-                    value={generalData.dob}
-                    onChange={(newValue) => {
-                      dispatch(
-                        setDob(format(new Date(newValue || ''), 'yyyy-MM-dd')),
-                      );
-                    }}
-                    renderInput={(params) => <TextField {...params} />}
-                  />
-                </LocalizationProvider>
-              </Box>
+              <DatePickerBox
+                control={control}
+                key={field.inputId}
+                inputId={field.inputId}
+                inputTitle={field.inputTitle}
+                data={generalData}
+                //   setValue={setDob}
+                //   isRequired={field.required}
+                objectKey={field.inputId as keyof IGeneral}
+                //   register={register}
+                errors={errors}
+              />
+              // <Box sx={{ my: 1 }} key={field.inputId}>
+              //   <LocalizationProvider dateAdapter={DateAdapter}>
+              //     <DatePicker
+              //       label={field.inputTitle}
+              //       value={generalData.dob}
+              //       {...register(`${field.inputId}` as const)}
+              //       onChange={(newValue) => {
+              //         dispatch(
+              //           updateForm({
+              //             dob: format(new Date(newValue || ''), 'yyyy-MM-dd'),
+              //           }),
+              //         );
+              //       }}
+              //       renderInput={(params) => <TextField {...params} />}
+              //     />
+              //   </LocalizationProvider>
+              // </Box>
             );
           case 'radio':
             return (

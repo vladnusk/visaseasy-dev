@@ -5,13 +5,7 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { tripForm } from '../../../fakeApi/Form/trip';
 import { useAppSelector, useAppDispatch } from '../../../store/hooks';
 import {
-  chooseNationality,
-  chooseDestination,
-  chooseResidency,
-  chooseCompanion,
-  chooseCompanionApply,
-  chooseExtraResidency,
-  chooseExtraNationality,
+  updateForm,
   selectTripData,
 } from '../../../store/slices/form/tripSlice';
 import { SelectCountry } from '../FormUtils/SelectCountry';
@@ -47,15 +41,7 @@ export const Trip = ({ handleNext, steps, formStep }: Props) => {
 
   const [form, setForm] = useState<ITripApi[]>(tripForm());
   const onSubmit: SubmitHandler<ITrip> = (data) => {
-    dispatch(chooseNationality(data.nationality));
-    dispatch(chooseDestination(data.destination));
-    dispatch(chooseResidency(data.residency));
-    dispatch(chooseCompanion(data.companion));
-    dispatch(chooseCompanionApply(data.companionApply));
-    if (watch('extraNationality'))
-      dispatch(chooseExtraNationality(data.extraNationality));
-    if (watch('extraResidency'))
-      dispatch(chooseExtraResidency(data.extraResidency));
+    dispatch(updateForm(data));
     handleNext();
   };
 
@@ -79,7 +65,7 @@ export const Trip = ({ handleNext, steps, formStep }: Props) => {
                 <SelectCountry
                   inputId={field.inputId}
                   inputTitle={field.inputTitle}
-                  data={tripData}
+                  data={tripData.form}
                   isRequired={field.required}
                   objectKey={field.inputId as keyof ITrip}
                   watch={watch}
@@ -88,7 +74,7 @@ export const Trip = ({ handleNext, steps, formStep }: Props) => {
                 />
                 {field.inputId === 'nationality' &&
                 form[1].inputId !== 'extraNationality' &&
-                !tripData.extraNationality.length ? (
+                !tripData.form.extraNationality.length ? (
                   <Button
                     onClick={() => {
                       const tmpArr = [...form];
@@ -108,7 +94,7 @@ export const Trip = ({ handleNext, steps, formStep }: Props) => {
                 {field.inputId === 'residency' &&
                 form[3].inputId !== 'extraResidency' &&
                 form[4].inputId !== 'extraResidency' &&
-                !tripData.extraResidency.length ? (
+                !tripData.form.extraResidency.length ? (
                   <Button
                     onClick={() => {
                       const tmpArr = [...form];
@@ -138,7 +124,7 @@ export const Trip = ({ handleNext, steps, formStep }: Props) => {
                 inputId={field.inputId}
                 inputTitle={field.inputTitle}
                 options={field.options || []}
-                data={tripData}
+                data={tripData.form}
                 isRequired={field.required}
                 objectKey={field.inputId as keyof ITrip}
                 watch={watch}

@@ -85,8 +85,8 @@ export const ApplicationFormLayout = () => {
           justifyContent: 'space-between',
         }}>
         <Typography variant="h4">
-          {tripData.destination
-            ? `${tripData.destination} visa application`
+          {tripData.form.destination
+            ? `${tripData.form.destination} visa application`
             : 'New Application'}
         </Typography>
         <Box>

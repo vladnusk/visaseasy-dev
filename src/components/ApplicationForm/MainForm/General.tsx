@@ -23,15 +23,20 @@ interface Props {
 }
 
 export const General = ({ handleBack, handleNext, steps, formStep }: Props) => {
+  const generalData = useAppSelector(selectGeneralData).form;
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
     control,
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      generalData,
+    },
+  });
   const dispatch = useAppDispatch();
-  const generalData = useAppSelector(selectGeneralData).form;
+
   const form = generalForm();
 
   const onSubmit: SubmitHandler<IGeneral> = (data) => {
@@ -78,11 +83,6 @@ export const General = ({ handleBack, handleNext, steps, formStep }: Props) => {
                   label={field.inputTitle}
                   variant="outlined"
                   placeholder={field.placeholder}
-                  value={
-                    watch(`${field.inputId}` as const)
-                      ? watch(`${field.inputId}` as const)
-                      : generalData[field.inputId as keyof IGeneral] || ''
-                  }
                   {...register(`${field.inputId}` as const)}
                 />
               </Box>

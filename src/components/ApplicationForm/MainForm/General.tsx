@@ -1,7 +1,4 @@
-import { FormHelperText, Box, TextField, Button } from '@mui/material/';
-import DateAdapter from '@mui/lab/AdapterDateFns';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import DatePicker from '@mui/lab/DatePicker';
+import { Box, Button } from '@mui/material/';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { generalForm } from '../../../fakeApi/Form/general';
 import { useAppSelector, useAppDispatch } from '../../../store/hooks';
@@ -9,11 +6,13 @@ import {
   selectGeneralData,
   updateForm,
 } from '../../../store/slices/form/generalSlice';
-import format from 'date-fns/format';
+// import format from 'date-fns/format';
 import { IGeneral } from '../../../models/form/IGeneral';
 import { SelectCountry } from '../FormUtils/SelectCountry';
 import { RadioBox } from '../FormUtils/RadioBox';
 import { DatePickerBox } from '../FormUtils/DatePickerBox';
+import { DateRangePickerBox } from '../FormUtils/DateRangePickerBox';
+import { TextFieldBox } from '../FormUtils/TextFieldBox';
 
 interface Props {
   handleBack: () => void;
@@ -25,23 +24,14 @@ interface Props {
 export const General = ({ handleBack, handleNext, steps, formStep }: Props) => {
   const generalData = useAppSelector(selectGeneralData).form;
   const {
-    register,
     handleSubmit,
-    watch,
     formState: { errors },
     control,
-  } = useForm({
-    defaultValues: {
-      generalData,
-    },
-  });
+  } = useForm({ defaultValues: generalData });
   const dispatch = useAppDispatch();
-
   const form = generalForm();
-
   const onSubmit: SubmitHandler<IGeneral> = (data) => {
     dispatch(updateForm(data));
-
     console.log(data);
     handleNext();
   };
@@ -66,72 +56,22 @@ export const General = ({ handleBack, handleNext, steps, formStep }: Props) => {
                 key={field.inputId}
                 inputId={field.inputId}
                 inputTitle={field.inputTitle}
-                data={generalData}
-                isRequired={field.required}
+                control={control}
                 objectKey={field.inputId as keyof IGeneral}
-                watch={watch}
-                register={register}
                 errors={errors}
               />
             );
-          case 'text':
+          case 'radio':
             return (
-              <Box sx={{ my: 1 }} key={field.inputId}>
-                <TextField
-                  sx={{ width: 300 }}
-                  id={field.inputId}
-                  label={field.inputTitle}
-                  variant="outlined"
-                  placeholder={field.placeholder}
-                  {...register(`${field.inputId}` as const)}
-                />
-              </Box>
-            );
-          case 'date-range':
-            return (
-              <Box
-                sx={{
-                  my: 1,
-                }}
-                key={field.inputId}>
-                <FormHelperText>{field.inputHelperText}</FormHelperText>
-                <Box sx={{ display: 'flex', flexDirection: 'row', my: 1 }}>
-                  <LocalizationProvider dateAdapter={DateAdapter}>
-                    <DatePicker
-                      label="From"
-                      value={generalData.tripDateFrom}
-                      {...register(`${field.inputId + 'From'}` as const)}
-                      onChange={(newValue) => {
-                        dispatch(
-                          updateForm({
-                            tripDateFrom: format(
-                              new Date(newValue || ''),
-                              'yyyy-MM-dd',
-                            ),
-                          }),
-                        );
-                      }}
-                      renderInput={(params) => <TextField {...params} />}
-                    />
-                    <DatePicker
-                      label="To"
-                      value={generalData.tripDateTo}
-                      {...register(`${field.inputId + 'To'}` as const)}
-                      onChange={(newValue) => {
-                        dispatch(
-                          updateForm({
-                            tripDateTo: format(
-                              new Date(newValue || ''),
-                              'yyyy-MM-dd',
-                            ),
-                          }),
-                        );
-                      }}
-                      renderInput={(params) => <TextField {...params} />}
-                    />
-                  </LocalizationProvider>
-                </Box>
-              </Box>
+              <RadioBox
+                key={field.inputId}
+                inputId={field.inputId}
+                inputTitle={field.inputTitle}
+                control={control}
+                options={field.options || []}
+                objectKey={field.inputId as keyof IGeneral}
+                errors={errors}
+              />
             );
           case 'date':
             return (
@@ -140,44 +80,29 @@ export const General = ({ handleBack, handleNext, steps, formStep }: Props) => {
                 key={field.inputId}
                 inputId={field.inputId}
                 inputTitle={field.inputTitle}
-                data={generalData}
-                //   setValue={setDob}
-                //   isRequired={field.required}
                 objectKey={field.inputId as keyof IGeneral}
-                //   register={register}
                 errors={errors}
               />
-              // <Box sx={{ my: 1 }} key={field.inputId}>
-              //   <LocalizationProvider dateAdapter={DateAdapter}>
-              //     <DatePicker
-              //       label={field.inputTitle}
-              //       value={generalData.dob}
-              //       {...register(`${field.inputId}` as const)}
-              //       onChange={(newValue) => {
-              //         dispatch(
-              //           updateForm({
-              //             dob: format(new Date(newValue || ''), 'yyyy-MM-dd'),
-              //           }),
-              //         );
-              //       }}
-              //       renderInput={(params) => <TextField {...params} />}
-              //     />
-              //   </LocalizationProvider>
-              // </Box>
             );
-          case 'radio':
+          case 'date-range':
             return (
-              <RadioBox
+              <DateRangePickerBox
+                control={control}
                 key={field.inputId}
                 inputId={field.inputId}
                 inputTitle={field.inputTitle}
-                options={field.options || []}
-                data={generalData}
-                isRequired={field.required}
                 objectKey={field.inputId as keyof IGeneral}
-                watch={watch}
-                register={register}
                 errors={errors}
+              />
+            );
+          case 'text':
+            return (
+              <TextFieldBox
+                control={control}
+                key={field.inputId}
+                placeholder={field.placeholder || ''}
+                inputId={field.inputId}
+                inputTitle={field.inputTitle}
               />
             );
         }

@@ -29,15 +29,14 @@ interface ITripApi {
 }
 
 export const Trip = ({ handleNext, steps, formStep }: Props) => {
+  const tripData = useAppSelector(selectTripData).form;
   const {
-    register,
-    watch,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+    control,
+  } = useForm({ defaultValues: tripData });
 
   const dispatch = useAppDispatch();
-  const tripData = useAppSelector(selectTripData);
 
   const [form, setForm] = useState<ITripApi[]>(tripForm());
   const onSubmit: SubmitHandler<ITrip> = (data) => {
@@ -65,16 +64,13 @@ export const Trip = ({ handleNext, steps, formStep }: Props) => {
                 <SelectCountry
                   inputId={field.inputId}
                   inputTitle={field.inputTitle}
-                  data={tripData.form}
-                  isRequired={field.required}
+                  control={control}
                   objectKey={field.inputId as keyof ITrip}
-                  watch={watch}
-                  register={register}
                   errors={errors}
                 />
                 {field.inputId === 'nationality' &&
                 form[1].inputId !== 'extraNationality' &&
-                !tripData.form.extraNationality.length ? (
+                !tripData.extraNationality.length ? (
                   <Button
                     onClick={() => {
                       const tmpArr = [...form];
@@ -94,7 +90,7 @@ export const Trip = ({ handleNext, steps, formStep }: Props) => {
                 {field.inputId === 'residency' &&
                 form[3].inputId !== 'extraResidency' &&
                 form[4].inputId !== 'extraResidency' &&
-                !tripData.form.extraResidency.length ? (
+                !tripData.extraResidency.length ? (
                   <Button
                     onClick={() => {
                       const tmpArr = [...form];
@@ -123,12 +119,9 @@ export const Trip = ({ handleNext, steps, formStep }: Props) => {
                 key={field.inputId}
                 inputId={field.inputId}
                 inputTitle={field.inputTitle}
+                control={control}
                 options={field.options || []}
-                data={tripData.form}
-                isRequired={field.required}
                 objectKey={field.inputId as keyof ITrip}
-                watch={watch}
-                register={register}
                 errors={errors}
               />
             );

@@ -25,7 +25,7 @@ export const generalForm = () => {
     {
       inputType: 'date-range',
       inputTitle: 'Desired trip dates',
-      inputId: 'tripDates',
+      inputId: 'tripDate',
       inputHelperText: 'Enter your desired trip dates',
       required: true,
     },

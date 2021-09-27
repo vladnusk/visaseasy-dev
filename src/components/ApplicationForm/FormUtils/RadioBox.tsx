@@ -1,3 +1,4 @@
+import { ErrorMessage } from '@hookform/error-message';
 import {
   FormControl,
   FormLabel,
@@ -13,6 +14,7 @@ interface Props {
   inputTitle: string;
   options: string[];
   control: any;
+  isRequired: boolean;
   objectKey: string;
   errors: any;
 }
@@ -22,6 +24,7 @@ export const RadioBox = ({
   inputTitle,
   options,
   control,
+  isRequired,
   objectKey,
 
   errors,
@@ -30,6 +33,7 @@ export const RadioBox = ({
     <FormControl sx={{ my: 1 }} key={inputId}>
       <FormLabel component="legend">{inputTitle}</FormLabel>
       <Controller
+        rules={{ required: isRequired }}
         render={({ field }) => (
           <RadioGroup row aria-label={inputId} {...field}>
             {options?.map((option) => {
@@ -48,9 +52,15 @@ export const RadioBox = ({
         control={control}
       />
 
-      <Typography sx={{ color: 'red', ml: 1, mt: 0.5, fontSize: 12 }}>
-        {errors[objectKey]?.message}
-      </Typography>
+      <ErrorMessage
+        errors={errors}
+        name={objectKey}
+        render={({ message }) => (
+          <Typography sx={{ color: 'red', ml: 1, mt: 0.5, fontSize: 12 }}>
+            {message || 'This field is required'}
+          </Typography>
+        )}
+      />
     </FormControl>
   );
 };

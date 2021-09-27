@@ -5,6 +5,7 @@ interface Props {
   inputId: string;
   inputTitle: string;
   objectKey: string;
+  isRequired: boolean;
   errors: any;
   control: any;
 }
@@ -13,6 +14,7 @@ export const DateRangePickerBox = ({
   inputId,
   inputTitle,
   objectKey,
+  isRequired,
   errors,
   control,
 }: Props) => {
@@ -28,6 +30,7 @@ export const DateRangePickerBox = ({
           inputId={inputId + 'From'}
           inputTitle={inputTitle}
           objectKey={objectKey}
+          isRequired={isRequired}
           errors={errors}
         />
         <DatePickerBox
@@ -35,6 +38,7 @@ export const DateRangePickerBox = ({
           inputId={inputId + 'To'}
           inputTitle={inputTitle}
           objectKey={objectKey}
+          isRequired={isRequired}
           errors={errors}
         />
       </Box>

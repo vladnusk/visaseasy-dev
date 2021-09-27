@@ -1,34 +1,33 @@
-import { Box, TextField, Button } from '@mui/material/';
-import DateAdapter from '@mui/lab/AdapterDateFns';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import DatePicker from '@mui/lab/DatePicker';
-import { useState } from 'react';
-
-import { useForm } from 'react-hook-form';
+import { Box } from '@mui/material/';
+import { SubmitHandler, useForm } from 'react-hook-form';
 import { employment } from '../../../fakeApi/Form/employment';
+import { IEmployment } from '../../../models/form/IEmployment';
+import { FormRender } from '../FormRender';
+import { useAppSelector, useAppDispatch } from '../../../store/hooks';
+import {
+  selectEmploymentData,
+  updateForm,
+} from '../../../store/slices/form/employmentSlice';
+import { ControlButtons } from '../FormUtils/ControlButtons';
 
 interface Props {
-  handleBack: () => void;
   handleNext: () => void;
-  formStep: number;
-  steps: string[];
 }
 
-export const Employment = ({
-  handleBack,
-  handleNext,
-  steps,
-  formStep,
-}: Props) => {
+export const Employment = ({ handleNext }: Props) => {
+  const employmentData = useAppSelector(selectEmploymentData).form;
+  const dispatch = useAppDispatch();
   const {
-    register,
-    // handleSubmit,
-    // watch,
-    // formState: { errors },
-  } = useForm();
-
+    handleSubmit,
+    formState: { errors },
+    control,
+  } = useForm({ defaultValues: employmentData });
+  const onSubmit: SubmitHandler<IEmployment> = (data) => {
+    dispatch(updateForm(data));
+    console.log(data);
+    handleNext();
+  };
   const form = employment();
-  const [value, setValue] = useState<Date | null>(null);
 
   return (
     <Box
@@ -37,69 +36,13 @@ export const Employment = ({
         flexDirection: 'column',
         width: 300,
         mt: 1,
-      }}>
-      {form.map((field) => {
-        switch (field.inputType) {
-          case 'text':
-            return (
-              <Box sx={{ my: 1 }} key={field.inputId}>
-                <TextField
-                  sx={{ width: 300 }}
-                  id={field.inputId}
-                  label={field.inputTitle}
-                  variant="outlined"
-                  placeholder={field.placeholder}
-                  {...register(`${field.inputId}` as const)}
-                />
-              </Box>
-            );
-
-          case 'date':
-            return (
-              <Box sx={{ my: 1 }} key={field.inputId}>
-                <LocalizationProvider dateAdapter={DateAdapter}>
-                  <DatePicker
-                    label={field.inputTitle}
-                    value={value}
-                    onChange={(newValue) => {
-                      setValue(newValue);
-                    }}
-                    renderInput={(params) => <TextField {...params} />}
-                  />
-                </LocalizationProvider>
-              </Box>
-            );
-        }
-      })}
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'flex-start',
-          alignItems: 'flex-start',
-          width: 400,
-          mt: 5,
-        }}>
-        <Button
-          onClick={handleBack}
-          size="large"
-          sx={{ mr: 2 }}
-          variant="outlined"
-          color="secondary">
-          Previous step
-        </Button>
-
-        <Button
-          onClick={(e) => {
-            e.preventDefault();
-
-            handleNext();
-          }}
-          size="large"
-          variant="contained"
-          color="primary">
-          {formStep === steps.length - 1 ? 'Submit form' : 'Next step'}
-        </Button>
-      </Box>
+      }}
+      component="form"
+      onSubmit={handleSubmit(onSubmit)}
+      noValidate
+      autoComplete="off">
+      <FormRender form={form} control={control} errors={errors} />
+      <ControlButtons form={form} errors={errors} />
     </Box>
   );
 };

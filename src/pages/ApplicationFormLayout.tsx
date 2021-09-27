@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import {
   Typography,
   Button,
@@ -12,9 +11,10 @@ import { General } from '../components/ApplicationForm/MainForm/General';
 import { Trip } from '../components/ApplicationForm/MainForm/Trip';
 import { Employment } from '../components/ApplicationForm/MainForm/Employment';
 import { PreviousEuropeTrips } from '../components/ApplicationForm/SpecificForm/PreviousEuropeTrips';
-import { useAppSelector } from '../store/hooks';
+import { useAppSelector, useAppDispatch } from '../store/hooks';
 import { selectTripData } from '../store/slices/form/tripSlice';
-function getSteps() {
+import { selectFormStep, updateFormStep } from '../store/slices/formStepSlice';
+export function getSteps() {
   return [
     'Trip',
     'General',
@@ -27,41 +27,22 @@ function getSteps() {
 
 export const ApplicationFormLayout = () => {
   const tripData = useAppSelector(selectTripData);
-  const [formStep, setFormStep] = useState(0);
+  const formStep = useAppSelector(selectFormStep);
   const steps = getSteps();
+  const dispatch = useAppDispatch();
   const handleNext = () => {
     if (formStep > steps.length - 2) return;
-    setFormStep((prevActiveStep) => prevActiveStep + 1);
-  };
-  const handleBack = () => {
-    if (formStep <= 0) return;
-    setFormStep((prevActiveStep) => prevActiveStep - 1);
+    dispatch(updateFormStep(1));
   };
 
   function getStepContent(stepIndex: number) {
     switch (stepIndex) {
       case 0:
-        return (
-          <Trip handleNext={handleNext} formStep={formStep} steps={steps} />
-        );
+        return <Trip handleNext={handleNext} />;
       case 1:
-        return (
-          <General
-            handleBack={handleBack}
-            handleNext={handleNext}
-            formStep={formStep}
-            steps={steps}
-          />
-        );
+        return <General handleNext={handleNext} />;
       case 2:
-        return (
-          <Employment
-            handleBack={handleBack}
-            handleNext={handleNext}
-            formStep={formStep}
-            steps={steps}
-          />
-        );
+        return <Employment handleNext={handleNext} />;
       case 3:
         return <PreviousEuropeTrips />;
       case 4:

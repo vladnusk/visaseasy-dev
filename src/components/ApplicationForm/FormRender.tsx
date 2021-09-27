@@ -1,50 +1,20 @@
-import { Box } from '@mui/material/';
-import { useForm, SubmitHandler } from 'react-hook-form';
-import { generalForm } from '../../../fakeApi/Form/general';
-import { useAppSelector, useAppDispatch } from '../../../store/hooks';
-import {
-  selectGeneralData,
-  updateForm,
-} from '../../../store/slices/form/generalSlice';
-// import format from 'date-fns/format';
-import { IGeneral } from '../../../models/form/IGeneral';
-import { SelectCountry } from '../FormUtils/SelectCountry';
-import { RadioBox } from '../FormUtils/RadioBox';
-import { DatePickerBox } from '../FormUtils/DatePickerBox';
-import { DateRangePickerBox } from '../FormUtils/DateRangePickerBox';
-import { TextFieldBox } from '../FormUtils/TextFieldBox';
-import { ControlButtons } from '../FormUtils/ControlButtons';
+import { ICompletedForm } from '../../models/ICompletedForm';
+import { SelectCountry } from './FormUtils/SelectCountry';
+import { RadioBox } from './FormUtils/RadioBox';
+import { DatePickerBox } from './FormUtils/DatePickerBox';
+import { DateRangePickerBox } from './FormUtils/DateRangePickerBox';
+import { TextFieldBox } from './FormUtils/TextFieldBox';
+import { IFormApi } from '../../models/IFormApi';
 
 interface Props {
-  handleNext: () => void;
+  form: IFormApi[];
+  control: any;
+  errors: any;
 }
 
-export const General = ({ handleNext }: Props) => {
-  const generalData = useAppSelector(selectGeneralData).form;
-  const {
-    handleSubmit,
-    formState: { errors },
-    control,
-  } = useForm({ defaultValues: generalData });
-  const dispatch = useAppDispatch();
-  const form = generalForm();
-  const onSubmit: SubmitHandler<IGeneral> = (data) => {
-    dispatch(updateForm(data));
-    handleNext();
-  };
-  console.log(typeof control);
+export const FormRender = ({ form, control, errors }: Props) => {
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        width: 300,
-        mt: 1,
-      }}
-      component="form"
-      onSubmit={handleSubmit(onSubmit)}
-      noValidate
-      autoComplete="off">
+    <>
       {form.map((field) => {
         switch (field.inputType) {
           case 'select-country':
@@ -55,7 +25,7 @@ export const General = ({ handleNext }: Props) => {
                 inputTitle={field.inputTitle}
                 isRequired={field.required}
                 control={control}
-                objectKey={field.inputId as keyof IGeneral}
+                objectKey={field.inputId as keyof ICompletedForm}
                 errors={errors}
               />
             );
@@ -68,7 +38,7 @@ export const General = ({ handleNext }: Props) => {
                 control={control}
                 isRequired={field.required}
                 options={field.options || []}
-                objectKey={field.inputId as keyof IGeneral}
+                objectKey={field.inputId as keyof ICompletedForm}
                 errors={errors}
               />
             );
@@ -80,7 +50,7 @@ export const General = ({ handleNext }: Props) => {
                 inputId={field.inputId}
                 inputTitle={field.inputTitle}
                 isRequired={field.required}
-                objectKey={field.inputId as keyof IGeneral}
+                objectKey={field.inputId as keyof ICompletedForm}
                 errors={errors}
               />
             );
@@ -92,7 +62,7 @@ export const General = ({ handleNext }: Props) => {
                 inputId={field.inputId}
                 inputTitle={field.inputTitle}
                 isRequired={field.required}
-                objectKey={field.inputId as keyof IGeneral}
+                objectKey={field.inputId as keyof ICompletedForm}
                 errors={errors}
               />
             );
@@ -105,13 +75,12 @@ export const General = ({ handleNext }: Props) => {
                 placeholder={field.placeholder || ''}
                 inputId={field.inputId}
                 inputTitle={field.inputTitle}
-                objectKey={field.inputId as keyof IGeneral}
+                objectKey={field.inputId as keyof ICompletedForm}
                 errors={errors}
               />
             );
         }
       })}
-      <ControlButtons form={form} errors={errors} />
-    </Box>
+    </>
   );
 };

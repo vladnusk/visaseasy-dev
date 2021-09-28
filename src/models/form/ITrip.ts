@@ -3,7 +3,7 @@ export interface ITrip {
   extraNationality: string;
   destination: string;
   residency: string;
-  extraResidency: string;
+  extraResidencies: string[];
   companion: 'yes' | 'no' | '';
   companionApply: 'yes' | 'no' | '';
 }

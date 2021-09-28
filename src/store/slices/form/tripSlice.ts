@@ -10,7 +10,7 @@ const initialState = {
     extraNationality: '',
     destination: '',
     residency: '',
-    extraResidency: '',
+    extraResidencies: [],
     companion: '',
     companionApply: '',
   },

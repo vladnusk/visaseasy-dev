@@ -19,6 +19,12 @@ export const tripForm = () => {
       required: false,
     },
     {
+      inputType: 'select-country-multiple',
+      inputTitle: 'Additional residence',
+      inputId: 'extraResidency',
+      required: false,
+    },
+    {
       inputType: 'radio',
       inputTitle: 'Are you going with someone else?',
       inputId: 'companion',

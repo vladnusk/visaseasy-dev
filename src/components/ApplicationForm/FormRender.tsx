@@ -5,14 +5,16 @@ import { DatePickerBox } from './FormUtils/DatePickerBox';
 import { DateRangePickerBox } from './FormUtils/DateRangePickerBox';
 import { TextFieldBox } from './FormUtils/TextFieldBox';
 import { IFormApi } from '../../models/IFormApi';
+import { MultipleSelectCountry } from './FormUtils/MultipleSelectCountry';
 
 interface Props {
   form: IFormApi[];
   control: any;
   errors: any;
+  watch?: any;
 }
 
-export const FormRender = ({ form, control, errors }: Props) => {
+export const FormRender = ({ form, control, errors, watch }: Props) => {
   return (
     <>
       {form.map((field) => {
@@ -27,6 +29,19 @@ export const FormRender = ({ form, control, errors }: Props) => {
                 control={control}
                 objectKey={field.inputId as keyof ICompletedForm}
                 errors={errors}
+              />
+            );
+          case 'select-country-multiple':
+            return (
+              <MultipleSelectCountry
+                key={field.inputId}
+                inputId={field.inputId}
+                inputTitle={field.inputTitle}
+                isRequired={field.required}
+                control={control}
+                objectKey={field.inputId as keyof ICompletedForm}
+                errors={errors}
+                watch={watch}
               />
             );
           case 'radio':

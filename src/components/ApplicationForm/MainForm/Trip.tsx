@@ -19,6 +19,7 @@ export const Trip = ({ handleNext }: Props) => {
     handleSubmit,
     formState: { errors },
     control,
+    watch,
   } = useForm({ defaultValues: tripData });
 
   const dispatch = useAppDispatch();
@@ -26,6 +27,7 @@ export const Trip = ({ handleNext }: Props) => {
   const form = tripForm();
   const onSubmit: SubmitHandler<ITrip> = (data) => {
     dispatch(updateForm(data));
+    console.log(data);
     handleNext();
   };
 
@@ -41,7 +43,7 @@ export const Trip = ({ handleNext }: Props) => {
       onSubmit={handleSubmit(onSubmit)}
       noValidate
       autoComplete="off">
-      <FormRender form={form} control={control} errors={errors} />
+      <FormRender form={form} control={control} errors={errors} watch={watch} />
       <ControlButtons form={form} errors={errors} />
     </Box>
   );

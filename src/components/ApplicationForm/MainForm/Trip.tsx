@@ -7,8 +7,6 @@ import {
   updateForm,
   selectTripData,
 } from '../../../store/slices/form/tripSlice';
-
-import React from 'react';
 import { ControlButtons } from '../FormUtils/ControlButtons';
 import { FormRender } from '../FormRender';
 interface Props {
@@ -44,7 +42,6 @@ export const Trip = ({ handleNext }: Props) => {
       noValidate
       autoComplete="off">
       <FormRender form={form} control={control} errors={errors} />
-
       <ControlButtons form={form} errors={errors} />
     </Box>
   );

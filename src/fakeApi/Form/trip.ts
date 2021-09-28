@@ -29,7 +29,7 @@ export const tripForm = () => {
       inputType: 'radio',
       inputTitle: 'Do you want to apply this person too?',
       inputId: 'companionApply',
-      required: true,
+      required: false,
       options: ['yes', 'no'],
     },
   ];

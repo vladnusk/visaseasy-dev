@@ -12,6 +12,7 @@ import ApplicationsList from './pages/ApplicationsList';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import { ApplicationFormLayout } from './pages/ApplicationFormLayout';
+import FAQ from './pages/FAQ';
 
 const theme = createTheme({
   palette: {
@@ -47,6 +48,9 @@ function App() {
               </Route>
               <Route path="/newApplication">
                 <ApplicationFormLayout />
+              </Route>
+              <Route path="/faq">
+                <FAQ />
               </Route>
             </>
           </AppMenu>

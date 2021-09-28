@@ -17,6 +17,7 @@ interface Props {
   isRequired: boolean;
   objectKey: string;
   errors: any;
+  disabled?: boolean;
 }
 
 export const RadioBox = ({
@@ -26,7 +27,7 @@ export const RadioBox = ({
   control,
   isRequired,
   objectKey,
-
+  disabled,
   errors,
 }: Props) => {
   return (
@@ -39,6 +40,7 @@ export const RadioBox = ({
             {options?.map((option) => {
               return (
                 <FormControlLabel
+                  disabled={disabled || false}
                   key={option}
                   control={<Radio />}
                   label={option}
